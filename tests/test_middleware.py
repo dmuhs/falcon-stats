@@ -8,6 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 logging.basicConfig(level=logging.DEBUG)
+# Illegal methods are PUT, HEAD, PATCH, DELETE
 test_resource = testing.SimpleTestResource(
     status="418 I'm a teapot",
     json={"message": "test"}
@@ -57,8 +58,6 @@ class TestStatsMiddleware(testing.TestCase):
         session = self.Session()
         rri = self.get_latest_rri(session)
         self.check_rri(rri, "GET", "418 I'm a teapot")
-
-        # GET has no content
         self.assertIsNone(rri.contentlength)
         self.assertIsNone(rri.content_type.text)
         session.close()
@@ -72,7 +71,6 @@ class TestStatsMiddleware(testing.TestCase):
         session = self.Session()
         rri = self.get_latest_rri(session)
         self.check_rri(rri, "POST", "418 I'm a teapot")
-
         self.assertEqual(rri.contentlength, 15)
         self.assertEqual(rri.content_type.text, "text/plain")
         session.close()
@@ -81,10 +79,7 @@ class TestStatsMiddleware(testing.TestCase):
         self.simulate_put("/stats")
         session = self.Session()
         rri = self.get_latest_rri(session)
-        # Illegal method
         self.check_rri(rri, "PUT", "405 Method Not Allowed")
-
-        # PUT has no content
         self.assertContentIsNone(rri)
         session.close()
 
@@ -92,10 +87,7 @@ class TestStatsMiddleware(testing.TestCase):
         self.simulate_head("/stats")
         session = self.Session()
         rri = self.get_latest_rri(session)
-        # Illegal method
         self.check_rri(rri, "HEAD", "405 Method Not Allowed")
-
-        # HEAD has no content
         self.assertContentIsNone(rri)
         session.close()
 
@@ -104,8 +96,6 @@ class TestStatsMiddleware(testing.TestCase):
         session = self.Session()
         rri = self.get_latest_rri(session)
         self.check_rri(rri, "OPTIONS", "200 OK")
-
-        # OPTIONS has no content
         self.assertContentIsNone(rri)
         session.close()
 
@@ -113,10 +103,7 @@ class TestStatsMiddleware(testing.TestCase):
         self.simulate_patch("/stats")
         session = self.Session()
         rri = self.get_latest_rri(session)
-        # Illegal method
         self.check_rri(rri, "PATCH", "405 Method Not Allowed")
-
-        # PATCH has no content
         self.assertContentIsNone(rri)
         session.close()
 
@@ -124,10 +111,7 @@ class TestStatsMiddleware(testing.TestCase):
         self.simulate_delete("/stats")
         session = self.Session()
         rri = self.get_latest_rri(session)
-        # Illegal method
         self.check_rri(rri, "DELETE", "405 Method Not Allowed")
-
-        # DELETE has no content
         self.assertContentIsNone(rri)
         session.close()
 
@@ -135,9 +119,6 @@ class TestStatsMiddleware(testing.TestCase):
         self.simulate_get("/invalid")
         session = self.Session()
         rri = self.get_latest_rri(session)
-        # Illegal method
         self.check_rri(rri, "GET", "404 Not Found", endpoint="/invalid")
-
-        # GET has no content
         self.assertContentIsNone(rri)
         session.close()
