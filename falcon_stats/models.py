@@ -24,42 +24,49 @@ def get_or_create(session, model, **kwargs):
 
 
 class UserAgent(Base):
+
     __tablename__ = "useragent"
     id = Column(Integer, primary_key=True, nullable=False)
     text = Column(String(512), nullable=False, unique=True)
 
 
 class URI(Base):
+
     __tablename__ = "uri"
     id = Column(Integer, primary_key=True, nullable=False)
     text = Column(String(512), nullable=False, unique=True)
 
 
 class Method(Base):
+
     __tablename__ = "method"
     id = Column(Integer, primary_key=True, nullable=False)
     text = Column(String(10), nullable=False, unique=True)
 
 
 class IP(Base):
+
     __tablename__ = "ip"
     id = Column(Integer, primary_key=True, nullable=False)
     text = Column(String(16), nullable=False, unique=True)
 
 
 class ContentType(Base):
+
     __tablename__ = "contenttype"
     id = Column(Integer, primary_key=True, nullable=False)
     text = Column(String(255), unique=True)
 
 
 class Status(Base):
+
     __tablename__ = "httpstatus"
     id = Column(Integer, primary_key=True, nullable=False)
     text = Column(String(255), unique=True)
 
 
 class ReqRespInfo(Base):
+
     __tablename__ = "stats"
     id = Column(Integer, primary_key=True, nullable=False)
 

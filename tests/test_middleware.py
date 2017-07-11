@@ -1,12 +1,14 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from falcon_stats import FalconStatsMiddleware, models
-from falcon import testing
-import falcon
 import logging
 
+import falcon
+from falcon import testing
+
+from falcon_stats import FalconStatsMiddleware, models
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 logging.basicConfig(level=logging.DEBUG)
+# Illegal methods are PUT, HEAD, PATCH, DELETE
 test_resource = testing.SimpleTestResource(
     status="418 I'm a teapot",
     json={"message": "test"}
@@ -14,6 +16,7 @@ test_resource = testing.SimpleTestResource(
 
 
 class TestStatsMiddleware(testing.TestCase):
+
     def setUp(self):
         super(TestStatsMiddleware, self).setUp()
         fsm = FalconStatsMiddleware(
@@ -26,8 +29,7 @@ class TestStatsMiddleware(testing.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        # init db
-        cls.engine = create_engine("sqlite:///test.db")
+        cls.engine = create_engine("sqlite:///:memory:")
         # make sure object relations don't expire after setup session is closed
         cls.Session = sessionmaker(bind=cls.engine, expire_on_commit=False)
 
@@ -47,13 +49,15 @@ class TestStatsMiddleware(testing.TestCase):
         )
         self.assertEqual(rri.uri.text, "http://falconframework.org" + endpoint)
 
+    def assertContentIsNone(self, rri):
+        self.assertIsNone(rri.contentlength)
+        self.assertIsNone(rri.content_type.text)
+
     def test_http_get(self):
         self.simulate_get("/stats")
         session = self.Session()
         rri = self.get_latest_rri(session)
         self.check_rri(rri, "GET", "418 I'm a teapot")
-
-        # GET has no content
         self.assertIsNone(rri.contentlength)
         self.assertIsNone(rri.content_type.text)
         session.close()
@@ -67,8 +71,6 @@ class TestStatsMiddleware(testing.TestCase):
         session = self.Session()
         rri = self.get_latest_rri(session)
         self.check_rri(rri, "POST", "418 I'm a teapot")
-
-        # GET has no content
         self.assertEqual(rri.contentlength, 15)
         self.assertEqual(rri.content_type.text, "text/plain")
         session.close()
@@ -77,24 +79,16 @@ class TestStatsMiddleware(testing.TestCase):
         self.simulate_put("/stats")
         session = self.Session()
         rri = self.get_latest_rri(session)
-        # Illegal method
         self.check_rri(rri, "PUT", "405 Method Not Allowed")
-
-        # PUT has no content
-        self.assertIsNone(rri.contentlength)
-        self.assertIsNone(rri.content_type.text)
+        self.assertContentIsNone(rri)
         session.close()
 
     def test_http_head(self):
         self.simulate_head("/stats")
         session = self.Session()
         rri = self.get_latest_rri(session)
-        # Illegal method
         self.check_rri(rri, "HEAD", "405 Method Not Allowed")
-
-        # HEAD has no content
-        self.assertIsNone(rri.contentlength)
-        self.assertIsNone(rri.content_type.text)
+        self.assertContentIsNone(rri)
         session.close()
 
     def test_http_options(self):
@@ -102,44 +96,29 @@ class TestStatsMiddleware(testing.TestCase):
         session = self.Session()
         rri = self.get_latest_rri(session)
         self.check_rri(rri, "OPTIONS", "200 OK")
-
-        # OPTIONS has no content
-        self.assertIsNone(rri.contentlength)
-        self.assertIsNone(rri.content_type.text)
+        self.assertContentIsNone(rri)
         session.close()
 
     def test_http_patch(self):
         self.simulate_patch("/stats")
         session = self.Session()
         rri = self.get_latest_rri(session)
-        # Illegal method
         self.check_rri(rri, "PATCH", "405 Method Not Allowed")
-
-        # PATCH has no content
-        self.assertIsNone(rri.contentlength)
-        self.assertIsNone(rri.content_type.text)
+        self.assertContentIsNone(rri)
         session.close()
 
     def test_http_delete(self):
         self.simulate_delete("/stats")
         session = self.Session()
         rri = self.get_latest_rri(session)
-        # Illegal method
         self.check_rri(rri, "DELETE", "405 Method Not Allowed")
-
-        # DELETE has no content
-        self.assertIsNone(rri.contentlength)
-        self.assertIsNone(rri.content_type.text)
+        self.assertContentIsNone(rri)
         session.close()
 
     def test_invalid_route(self):
         self.simulate_get("/invalid")
         session = self.Session()
         rri = self.get_latest_rri(session)
-        # Illegal method
         self.check_rri(rri, "GET", "404 Not Found", endpoint="/invalid")
-
-        # GET has no content
-        self.assertIsNone(rri.contentlength)
-        self.assertIsNone(rri.content_type.text)
+        self.assertContentIsNone(rri)
         session.close()

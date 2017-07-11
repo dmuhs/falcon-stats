@@ -7,7 +7,6 @@ from sqlalchemy.orm import sessionmaker
 from .models import (IP, URI, Base, ContentType, Method, ReqRespInfo, Status,
                      UserAgent, get_or_create)
 
-
 logger = logging.getLogger(__name__)
 REQ_RESP_FORMAT = """
 -----
