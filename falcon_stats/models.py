@@ -1,4 +1,5 @@
 import logging
+
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, Interval, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
