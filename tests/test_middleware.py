@@ -28,8 +28,7 @@ class TestStatsMiddleware(testing.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        # init db
-        cls.engine = create_engine("sqlite:///test.db")
+        cls.engine = create_engine("sqlite:///:memory:")
         # make sure object relations don't expire after setup session is closed
         cls.Session = sessionmaker(bind=cls.engine, expire_on_commit=False)
 
