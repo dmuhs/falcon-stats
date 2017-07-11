@@ -15,6 +15,7 @@ test_resource = testing.SimpleTestResource(
 
 
 class TestStatsMiddleware(testing.TestCase):
+
     def setUp(self):
         super(TestStatsMiddleware, self).setUp()
         fsm = FalconStatsMiddleware(
