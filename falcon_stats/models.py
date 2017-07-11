@@ -1,16 +1,21 @@
+import logging
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, Interval, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 Base = declarative_base()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def get_or_create(session, model, **kwargs):
     # https://stackoverflow.com/a/6078058
     instance = session.query(model).filter_by(**kwargs).first()
     if instance:
+        logger.debug("%s instance found in the DB", model.__name__)
         return instance
     else:
+        logger.debug("%s instance not found - creating it", model.__name__)
         instance = model(**kwargs)
         session.add(instance)
         session.commit()
