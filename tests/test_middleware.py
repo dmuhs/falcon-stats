@@ -48,6 +48,10 @@ class TestStatsMiddleware(testing.TestCase):
         )
         self.assertEqual(rri.uri.text, "http://falconframework.org" + endpoint)
 
+    def assertContentIsNone(self, rri):
+        self.assertIsNone(rri.contentlength)
+        self.assertIsNone(rri.content_type.text)
+
     def test_http_get(self):
         self.simulate_get("/stats")
         session = self.Session()
@@ -69,7 +73,6 @@ class TestStatsMiddleware(testing.TestCase):
         rri = self.get_latest_rri(session)
         self.check_rri(rri, "POST", "418 I'm a teapot")
 
-        # GET has no content
         self.assertEqual(rri.contentlength, 15)
         self.assertEqual(rri.content_type.text, "text/plain")
         session.close()
@@ -82,8 +85,7 @@ class TestStatsMiddleware(testing.TestCase):
         self.check_rri(rri, "PUT", "405 Method Not Allowed")
 
         # PUT has no content
-        self.assertIsNone(rri.contentlength)
-        self.assertIsNone(rri.content_type.text)
+        self.assertContentIsNone(rri)
         session.close()
 
     def test_http_head(self):
@@ -94,8 +96,7 @@ class TestStatsMiddleware(testing.TestCase):
         self.check_rri(rri, "HEAD", "405 Method Not Allowed")
 
         # HEAD has no content
-        self.assertIsNone(rri.contentlength)
-        self.assertIsNone(rri.content_type.text)
+        self.assertContentIsNone(rri)
         session.close()
 
     def test_http_options(self):
@@ -105,8 +106,7 @@ class TestStatsMiddleware(testing.TestCase):
         self.check_rri(rri, "OPTIONS", "200 OK")
 
         # OPTIONS has no content
-        self.assertIsNone(rri.contentlength)
-        self.assertIsNone(rri.content_type.text)
+        self.assertContentIsNone(rri)
         session.close()
 
     def test_http_patch(self):
@@ -117,8 +117,7 @@ class TestStatsMiddleware(testing.TestCase):
         self.check_rri(rri, "PATCH", "405 Method Not Allowed")
 
         # PATCH has no content
-        self.assertIsNone(rri.contentlength)
-        self.assertIsNone(rri.content_type.text)
+        self.assertContentIsNone(rri)
         session.close()
 
     def test_http_delete(self):
@@ -129,8 +128,7 @@ class TestStatsMiddleware(testing.TestCase):
         self.check_rri(rri, "DELETE", "405 Method Not Allowed")
 
         # DELETE has no content
-        self.assertIsNone(rri.contentlength)
-        self.assertIsNone(rri.content_type.text)
+        self.assertContentIsNone(rri)
         session.close()
 
     def test_invalid_route(self):
@@ -141,6 +139,5 @@ class TestStatsMiddleware(testing.TestCase):
         self.check_rri(rri, "GET", "404 Not Found", endpoint="/invalid")
 
         # GET has no content
-        self.assertIsNone(rri.contentlength)
-        self.assertIsNone(rri.content_type.text)
+        self.assertContentIsNone(rri)
         session.close()
