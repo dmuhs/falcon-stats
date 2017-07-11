@@ -9,8 +9,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 test_resource = testing.SimpleTestResource(
     status="418 I'm a teapot",
-    json={"message": "test"},
-
+    json={"message": "test"}
 )
 
 
@@ -28,7 +27,7 @@ class TestStatsMiddleware(testing.TestCase):
     @classmethod
     def setUpClass(cls):
         # init db
-        cls.engine = create_engine("sqlite:///:memory:")
+        cls.engine = create_engine("sqlite:///test.db")
         # make sure object relations don't expire after setup session is closed
         cls.Session = sessionmaker(bind=cls.engine, expire_on_commit=False)
 

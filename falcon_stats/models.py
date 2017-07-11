@@ -21,13 +21,13 @@ def get_or_create(session, model, **kwargs):
 class UserAgent(Base):
     __tablename__ = "useragent"
     id = Column(Integer, primary_key=True, nullable=False)
-    text = Column(Text, nullable=False, unique=True)
+    text = Column(String(512), nullable=False, unique=True)
 
 
 class URI(Base):
     __tablename__ = "uri"
     id = Column(Integer, primary_key=True, nullable=False)
-    text = Column(Text, nullable=False, unique=True)
+    text = Column(String(512), nullable=False, unique=True)
 
 
 class Method(Base):
