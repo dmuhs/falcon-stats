@@ -12,17 +12,17 @@ logger.setLevel(logging.DEBUG)
 
 
 REQ_RESP_FORMAT = """
+-----
 Date: {date}
 Processing Time: {processed:.4f}ms
 Method: {method}
-Scheme: {scheme}
 URI: {uri}
 IP: {ip}
 User-Agent: {useragent}
 Content-Type: {contenttype}
 Content-Length: {contentlength}
 Status: {status}
-Success: {success}
+-----
 """
 
 
@@ -30,6 +30,7 @@ class FalconStatsMiddleware(object):
 
     def __init__(self, debug=False, **kwargs):
         if not debug:
+            logger.debug("Using MySQL connection at %s", kwargs["db_addr"])
             DB = "mysql+pymysql://{}:{}@{}/{}".format(
                 kwargs["db_user"],
                 kwargs["db_pass"],
@@ -39,20 +40,22 @@ class FalconStatsMiddleware(object):
             engine = create_engine(DB, pool_pre_ping=True)
             self.Session = sessionmaker(bind=engine)
         else:
+            logger.debug("Using debug session")
             engine = kwargs["engine"]
             self.Session = kwargs["session"]
         Base.metadata.create_all(bind=engine)
 
     def process_request(self, req, resp):
-        # start processing start time
+        logger.debug("Start request-response time measurement")
         req.context["start_time"] = datetime.now()
 
     def process_response(self, req, resp, resource, req_succeeded):
-        """Post-processing of the response (after routing)."""
+        logger.debug("Stop request-response time measurement")
         now = datetime.now()
         delta = now - req.context["start_time"]
 
         session = self.Session()
+        logger.debug("Assemble DB models")
         uag = get_or_create(session, UserAgent, text=req.user_agent)
         uri = get_or_create(session, URI, text=req.uri)
         mtd = get_or_create(session, Method, text=req.method)
@@ -71,6 +74,7 @@ class FalconStatsMiddleware(object):
             status_id=stt.id,
             contentlength=req.content_length
         )
+        logger.debug("Add Request-Response Info model to DB")
         session.add(rri)
         session.commit()
         session.close()
@@ -79,12 +83,10 @@ class FalconStatsMiddleware(object):
             date=now.strftime("%c"),
             processed=delta.total_seconds() * 1000,  # milliseconds
             method=req.method,
-            scheme=req.scheme,
             uri=req.uri,
             ip=req.remote_addr,
             useragent=req.user_agent,
             contenttype=req.content_type,
             contentlength=req.content_length,
-            status=resp.status,
-            success=req_succeeded
+            status=resp.status
         ))
