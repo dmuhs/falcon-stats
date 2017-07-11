@@ -7,13 +7,11 @@ from sqlalchemy.orm import sessionmaker
 from .models import (IP, URI, Base, ContentType, Method, ReqRespInfo, Status,
                      UserAgent, get_or_create)
 
+
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-
 REQ_RESP_FORMAT = """
 -----
-Date: {date}
+REQUEST-RESPONSE FROM {date}
 Processing Time: {processed:.4f}ms
 Method: {method}
 URI: {uri}
