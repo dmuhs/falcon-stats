@@ -1,10 +1,11 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from falcon_stats import FalconStatsMiddleware, models
-from falcon import testing
-import falcon
 import logging
 
+import falcon
+from falcon import testing
+
+from falcon_stats import FalconStatsMiddleware, models
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 logging.basicConfig(level=logging.DEBUG)
 test_resource = testing.SimpleTestResource(
