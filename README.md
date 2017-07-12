@@ -1,4 +1,6 @@
 # Falcon Stats
+[![Build Status](https://travis-ci.org/dmuhs/falcon-stats.svg?branch=master)](https://travis-ci.org/dmuhs/falcon-stats)
+
 `falcon-stats` is a simple usage statistics middleware for the [Falcon REST framework](https://falconframework.org/). It should primarily enable later analysis that separately gets relevant data from the DB.
 
 ## Data Collection
