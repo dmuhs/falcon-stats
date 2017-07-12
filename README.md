@@ -1,5 +1,9 @@
 # Falcon Stats
 [![Build Status](https://travis-ci.org/dmuhs/falcon-stats.svg?branch=master)](https://travis-ci.org/dmuhs/falcon-stats)
+[![PyPI](https://img.shields.io/pypi/status/falcon-stats.svg)](https://pypi.python.org/pypi/falcon-stats)
+[![PyPI](https://img.shields.io/pypi/v/falcon-stats.svg)](https://pypi.python.org/pypi/falcon-stats)
+[![PyPI](https://img.shields.io/pypi/format/falcon-stats.svg)](https://pypi.python.org/pypi/falcon-stats)
+
 
 `falcon-stats` is a simple usage statistics middleware for the [Falcon REST framework](https://falconframework.org/). It should primarily enable later analysis that separately gets relevant data from the DB.
 
