@@ -9,7 +9,7 @@ def read(fname):
 
 setup(
     name="falcon-stats",
-    version="0.4.0",
+    version="0.5",
     author="Dominik Muhs",
     author_email="dominik.muhs@outlook.com",
     description=("A simple middleware to gather request-response statistics "
@@ -20,7 +20,7 @@ setup(
     packages=['falconstats', 'tests'],
     long_description=read('README.md'),
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware",
         "License :: OSI Approved :: MIT License"
