@@ -3,7 +3,7 @@ import logging
 import falcon
 from falcon import testing
 
-from falcon_stats import FalconStatsMiddleware, models
+from falconstats import FalconStatsMiddleware, models
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
