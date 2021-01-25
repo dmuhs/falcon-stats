@@ -1,4 +1,4 @@
 falcon==2.0.0
-pytest==6.2.1
 PyMySQL==1.0.2
+pytest==6.2.2
 -e git://github.com/zzzeek/sqlalchemy.git@e6555083d41accf983e5e8045956779c4fbc97a3#egg=SQLAlchemy
